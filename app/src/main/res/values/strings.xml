@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">MyWeather</string>
     <string name="home">Home</string>
+    <string name="check_forecast">Check Forecast</string>
+    <string name="search_more_places">Search more places</string>
 </resources>

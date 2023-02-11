@@ -14,15 +14,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DashboardViewModel @Inject constructor(private val getForecast: GetForecast) : ViewModel() {
+class DashboardViewModel @Inject constructor(private val getCurrentWeather: GetCurrentWeather) : ViewModel() {
 
-    private val _currentWeather : MutableStateFlow<ForecastResponse?> = MutableStateFlow(null)
-    val currentWeather : StateFlow<ForecastResponse?>  = _currentWeather
+    private val _currentWeather : MutableStateFlow<CurrentWeatherResponse?> = MutableStateFlow(null)
+    val currentWeather : StateFlow<CurrentWeatherResponse?>  = _currentWeather
 
     fun getCurrentWeatherData(){
         viewModelScope.launch{
             try {
-                _currentWeather.value = getForecast.getForecastCity("Cairo","e3f8facecf0ef485379dd7f8cdafeeda")
+                _currentWeather.value = getCurrentWeather.getCurrentWeatherCity("Cairo","e3f8facecf0ef485379dd7f8cdafeeda")
             }catch (e:java.lang.Exception){
                 Log.e("ERROR",e.message.toString())
             }
