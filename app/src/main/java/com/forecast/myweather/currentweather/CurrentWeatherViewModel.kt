@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.forecast.domain.entity.CurrentWeatherResponse
 import com.forecast.domain.usecase.GetCurrentWeather
+import com.forecast.myweather.BuildConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,20 +26,22 @@ class CurrentWeatherViewModel @Inject constructor(private val getCurrentWeather:
                     _currentWeather.value = getCurrentWeather.getCurrentWeatherZip(
                         query,
                         units,
-                        "e3f8facecf0ef485379dd7f8cdafeeda"
+                        BuildConfig.WEATHER_API_KEY
+
                     )
                 } else if (type.equals("city")) {
                     _currentWeather.value = getCurrentWeather.getCurrentWeatherCity(
                         query,
                         units,
-                        "e3f8facecf0ef485379dd7f8cdafeeda"
+                        BuildConfig.WEATHER_API_KEY
+
                     )
                 } else {
                     _currentWeather.value = getCurrentWeather.getCurrentWeatherLatLon(
                         query.split(',')[0],
                         query.split(',')[0],
                         units,
-                        "e3f8facecf0ef485379dd7f8cdafeeda"
+                        BuildConfig.WEATHER_API_KEY
                     )
                 }
 
