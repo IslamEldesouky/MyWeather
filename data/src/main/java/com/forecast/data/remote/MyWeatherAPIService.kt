@@ -10,12 +10,14 @@ interface MyWeatherAPIService {
     @GET("weather")
     suspend fun getCurrentWeatherByCity(
         @Query("q") city: String,
+        @Query("units") filterTemp: String,
         @Query("appid") apiKey: String
     ): CurrentWeatherResponse
 
     @GET("weather")
     suspend fun getCurrentWeatherByZip(
         @Query("zip") zip: String,
+        @Query("units") filterTemp: String,
         @Query("appid") apiKey: String
     ): CurrentWeatherResponse
 
@@ -23,18 +25,21 @@ interface MyWeatherAPIService {
     suspend fun getCurrentWeatherByLatLon(
         @Query("lat") lat: String,
         @Query("lon") lon: String,
+        @Query("units") filterTemp: String,
         @Query("appid") apiKey: String
     ): CurrentWeatherResponse
 
     @GET("forecast")
     suspend fun getForecastByCity(
         @Query("q") city: String,
+        @Query("units") filterTemp: String,
         @Query("appid") apiKey: String
     ): ForecastResponse
 
     @GET("forecast")
     suspend fun getForecastByZip(
         @Query("zip") zip: String,
+        @Query("units") filterTemp: String,
         @Query("appid") apiKey: String
     ): ForecastResponse
 
@@ -42,6 +47,7 @@ interface MyWeatherAPIService {
     suspend fun getForecastByLatLon(
         @Query("lat") lat: String,
         @Query("lon") lon: String,
+        @Query("units") filterTemp: String,
         @Query("appid") apiKey: String
     ): ForecastResponse
 }

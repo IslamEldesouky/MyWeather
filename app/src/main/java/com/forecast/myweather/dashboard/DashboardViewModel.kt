@@ -19,10 +19,10 @@ class DashboardViewModel @Inject constructor(private val getCurrentWeather: GetC
     private val _currentWeather : MutableStateFlow<CurrentWeatherResponse?> = MutableStateFlow(null)
     val currentWeather : StateFlow<CurrentWeatherResponse?>  = _currentWeather
 
-    fun getCurrentWeatherData(){
+    fun getCurrentWeatherData(units:String, city:String){
         viewModelScope.launch{
             try {
-                _currentWeather.value = getCurrentWeather.getCurrentWeatherCity("Cairo","e3f8facecf0ef485379dd7f8cdafeeda")
+                _currentWeather.value = getCurrentWeather.getCurrentWeatherCity(city,units,"e3f8facecf0ef485379dd7f8cdafeeda")
             }catch (e:java.lang.Exception){
                 Log.e("ERROR",e.message.toString())
             }
