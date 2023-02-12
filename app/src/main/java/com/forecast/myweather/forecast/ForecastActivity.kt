@@ -92,175 +92,163 @@ class ForecastActivity : AppCompatActivity(), CurrentWeatherAdapter.ItemSelected
                 false
             }
         }
-    lifecycleScope.launch {
-        viewModel.currentForecast.collect() {
-            if (it != null) {
-                binding.progressBar.visibility = View.INVISIBLE
-                setLastSearched(it.city.name)
-                var tmp = ""
-                if (getFilterTemp().equals("metric"))
-                    tmp = it.list.get(0).main.temp.toString() + "°C"
-                else
-                    tmp = it.list.get(0).main.temp.toString() + "°F"
-                val searchItem = SearchItem(it.city.id, it.city.name, tmp)
-                searchItems.add(searchItem)
-                if (searchItems.size > 5) {
-                    searchItems.removeFirst()
+        lifecycleScope.launch {
+            viewModel.currentForecast.collect() {
+                if (it != null) {
+                    binding.progressBar.visibility = View.INVISIBLE
+                    setLastSearched(it.city.name)
+                    var tmp = ""
+                    if (getFilterTemp().equals("metric"))
+                        tmp = it.list.get(0).main.temp.toString() + "°C"
+                    else
+                        tmp = it.list.get(0).main.temp.toString() + "°F"
+                    val searchItem = SearchItem(it.city.id, it.city.name, tmp)
+                    searchItems.add(searchItem)
+                    if (searchItems.size > 5) {
+                        searchItems.removeFirst()
+                    }
+                    if (it.list != null) {
+                        forecastAdapter.submitList(Utils().getTodaysForecastItems(it?.list))
+                        rvForecasteItems.adapter = forecastAdapter
+                    }
+                    currentWeatherAdapter.submitList(searchItems)
+                    rvSearchedItems.adapter = currentWeatherAdapter
+                } else {
+                    Toast.makeText(this@ForecastActivity, "No data", Toast.LENGTH_SHORT).show()
                 }
-                if (it.list != null) {
-                    forecastAdapter.submitList(Utils().getTodaysForecastItems(it?.list))
-                    rvForecasteItems.adapter = forecastAdapter
-                }
-                currentWeatherAdapter.submitList(searchItems)
-                rvSearchedItems.adapter = currentWeatherAdapter
-            } else {
-//                    binding.tvCity.text = getString(R.string.empty_text)
             }
         }
     }
-}
 
-override fun itemSelected(searchItem: SearchItem) {
-    viewModel.getForecastData(
-        searchItem.cityName.toString(),
-        getFilterTemp(),
-        "city"
-    )
-}
-
-override fun navigateToHome() {
-    val intent = Intent(this@ForecastActivity, DashboardActivity::class.java)
-    startActivity(intent)
-}
-
-override fun zipCodeSelected() {
-    setFilter("zip")
-    binding.rbZip.isChecked = true
-    binding.rbCurrent.isChecked = false
-    binding.rbCity.isChecked = false
-    binding.rbLat.isChecked = false
-}
-
-override fun citySelected() {
-    setFilter("city")
-    binding.rbZip.isChecked = false
-    binding.rbCurrent.isChecked = false
-    binding.rbCity.isChecked = true
-    binding.rbLat.isChecked = false
-}
-
-override fun latLonSelected() {
-    setFilter("lat")
-    binding.rbZip.isChecked = false
-    binding.rbCurrent.isChecked = false
-    binding.rbCity.isChecked = false
-    binding.rbLat.isChecked = true
-}
-
-override fun currentLocationSelected() {
-    setFilter("current")
-    getLocation()
-    binding.rbZip.isChecked = false
-    binding.rbCurrent.isChecked = true
-    binding.rbCity.isChecked = false
-    binding.rbLat.isChecked = false
-}
-
-fun setFilter(filter: String) {
-    if (this::mPref.isInitialized)
-        mPref.edit().putString(PREF_KEY_FILTER, filter).apply()
-}
-
-fun getFilter(filter: String): String {
-    if (this::mPref.isInitialized)
-        return readFromPreferences(PREF_KEY_FILTER, "").toString()
-    else
-        return ""
-}
-
-fun setFilterTemp(filter: String) {
-    if (this::mPref.isInitialized)
-        mPref.edit().putString(PREF_KEY_FILTER_TEMP, filter).apply()
-}
-
-fun getFilterTemp(): String {
-    if (this::mPref.isInitialized)
-        return readFromPreferences(PREF_KEY_FILTER_TEMP, "").toString()
-    else
-        return ""
-}
-
-fun setLastSearched(lastSearched: String) {
-    if (this::mPref.isInitialized)
-        mPref.edit().putString(PREF_KEY_LAST_SEARCHED, lastSearched).apply()
-}
-
-fun getLastSearched(): String {
-    if (this::mPref.isInitialized)
-        return readFromPreferences(PREF_KEY_LAST_SEARCHED, "").toString()
-    else
-        return ""
-}
-
-private fun readFromPreferences(
-    preferenceKey: String,
-    defaultValue: String
-): String? {
-    if (this::mPref.isInitialized) {
-        return mPref.getString(preferenceKey, defaultValue)
-    } else {
-        return ""
-    }
-}
-
-private fun getLocation() {
-    locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-    if ((ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) != PackageManager.PERMISSION_GRANTED)
-    ) {
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-            locationPermissionCode
+    override fun itemSelected(searchItem: SearchItem) {
+        viewModel.getForecastData(
+            searchItem.cityName.toString(),
+            getFilterTemp(),
+            "city"
         )
     }
-    locationManager?.requestLocationUpdates(
-        LocationManager.NETWORK_PROVIDER,
-        0L,
-        0f,
-        locationListener
-    )
 
-}
+    override fun navigateToHome() {
+        val intent = Intent(this@ForecastActivity, DashboardActivity::class.java)
+        startActivity(intent)
+    }
 
-override fun onRequestPermissionsResult(
-    requestCode: Int,
-    permissions: Array<out String>,
-    grantResults: IntArray
-) {
-    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    if (requestCode == locationPermissionCode) {
-        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
+    override fun zipCodeSelected() {
+        setFilter("zip")
+        binding.rbZip.isChecked = true
+        binding.rbCurrent.isChecked = false
+        binding.rbCity.isChecked = false
+        binding.rbLat.isChecked = false
+    }
+
+    override fun citySelected() {
+        setFilter("city")
+        binding.rbZip.isChecked = false
+        binding.rbCurrent.isChecked = false
+        binding.rbCity.isChecked = true
+        binding.rbLat.isChecked = false
+    }
+
+    override fun latLonSelected() {
+        setFilter("lat")
+        binding.rbZip.isChecked = false
+        binding.rbCurrent.isChecked = false
+        binding.rbCity.isChecked = false
+        binding.rbLat.isChecked = true
+    }
+
+    override fun currentLocationSelected() {
+        setFilter("current")
+        getLocation()
+        binding.rbZip.isChecked = false
+        binding.rbCurrent.isChecked = true
+        binding.rbCity.isChecked = false
+        binding.rbLat.isChecked = false
+    }
+
+    fun setFilter(filter: String) {
+        if (this::mPref.isInitialized)
+            mPref.edit().putString(PREF_KEY_FILTER, filter).apply()
+    }
+
+    fun getFilterTemp(): String {
+        if (this::mPref.isInitialized)
+            return readFromPreferences(PREF_KEY_FILTER_TEMP, "").toString()
+        else
+            return ""
+    }
+
+    fun setLastSearched(lastSearched: String) {
+        if (this::mPref.isInitialized)
+            mPref.edit().putString(PREF_KEY_LAST_SEARCHED, lastSearched).apply()
+    }
+
+    fun getLastSearched(): String {
+        if (this::mPref.isInitialized)
+            return readFromPreferences(PREF_KEY_LAST_SEARCHED, "").toString()
+        else
+            return ""
+    }
+
+    private fun readFromPreferences(
+        preferenceKey: String,
+        defaultValue: String
+    ): String? {
+        if (this::mPref.isInitialized) {
+            return mPref.getString(preferenceKey, defaultValue)
         } else {
-            Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
+            return ""
         }
     }
-}
 
-private val locationListener: LocationListener = object : LocationListener {
-    override fun onLocationChanged(location: Location) {
-        viewModel.getForecastData(
-            location.latitude.toString() + ',' + location.longitude,
-            getFilterTemp(),
-            "lat"
+    private fun getLocation() {
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if ((ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED)
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                locationPermissionCode
+            )
+        }
+        locationManager?.requestLocationUpdates(
+            LocationManager.NETWORK_PROVIDER,
+            0L,
+            0f,
+            locationListener
         )
+
     }
 
-    override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
-    override fun onProviderEnabled(provider: String) {}
-    override fun onProviderDisabled(provider: String) {}
-}
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == locationPermissionCode) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private val locationListener: LocationListener = object : LocationListener {
+        override fun onLocationChanged(location: Location) {
+            viewModel.getForecastData(
+                location.latitude.toString() + ',' + location.longitude,
+                getFilterTemp(),
+                "lat"
+            )
+        }
+
+        override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
+        override fun onProviderEnabled(provider: String) {}
+        override fun onProviderDisabled(provider: String) {}
+    }
 }

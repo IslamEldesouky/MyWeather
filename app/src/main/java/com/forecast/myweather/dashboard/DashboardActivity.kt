@@ -72,33 +72,11 @@ class DashboardActivity : AppCompatActivity(), DashboardHandler {
         }
     }
 
-    fun setFilter(filter: String) {
-        if (this::mPref.isInitialized)
-            mPref.edit().putString(PREF_KEY_FILTER, filter).apply()
-    }
-
-    fun getFilter(filter: String): String {
-        if (this::mPref.isInitialized)
-            return readFromPreferences(PREF_KEY_FILTER, "").toString()
-        else
-            return ""
-    }
-
-    fun setFilterTemp(filter: String) {
-        if (this::mPref.isInitialized)
-            mPref.edit().putString(PREF_KEY_FILTER_TEMP, filter).apply()
-    }
-
     fun getFilterTemp(): String {
         if (this::mPref.isInitialized)
             return readFromPreferences(PREF_KEY_FILTER_TEMP, "").toString()
         else
             return ""
-    }
-
-    fun setLastSearched(lastSearched: String) {
-        if (this::mPref.isInitialized)
-            mPref.edit().putString(PREF_KEY_LAST_SEARCHED, lastSearched).apply()
     }
 
     fun getLastSearched(): String {
