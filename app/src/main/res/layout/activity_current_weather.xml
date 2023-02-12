@@ -240,6 +240,7 @@
                 android:paddingStart="0dp"
                 android:paddingEnd="0dp"
                 android:text="@string/check_forecast"
+                android:onClick="@{()->handler.navigateToForecast()}"
                 android:textColor="@color/white"
                 android:textSize="14sp" />
 
@@ -253,6 +254,7 @@
                 android:paddingStart="0dp"
                 android:paddingEnd="0dp"
                 android:text="@string/return_home"
+                android:onClick="@{()->handler.navigateToHome()}"
                 android:textColor="@color/white"
                 android:textSize="14sp" />
         </LinearLayout>

@@ -22,7 +22,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.forecast.domain.entity.SearchItem
 import com.forecast.myweather.R
-import com.forecast.myweather.SharedPreferencesHelper
 import com.forecast.myweather.dashboard.DashboardActivity
 import com.forecast.myweather.databinding.ActivityCurrentWeatherBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,6 +50,8 @@ class CurrentWeatherActivity : AppCompatActivity(), CurrentWeatherAdapter.ItemSe
         val rv: RecyclerView = binding.rvSearchItems
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager?
         mPref = getSharedPreferences("main", Context.MODE_PRIVATE)
+        if (getFilterTemp().equals(""))
+            setFilterTemp("metric")
         binding.search.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 if (binding.rbZip.isChecked) {
@@ -65,12 +66,18 @@ class CurrentWeatherActivity : AppCompatActivity(), CurrentWeatherAdapter.ItemSe
                         getFilterTemp(),
                         "city"
                     )
-                } else {
+                } else if (binding.rbLat.isChecked) {
                     viewModel.getCurrentWeatherData(
                         binding.search.text.toString(),
                         getFilterTemp(),
                         "lat"
                     )
+                } else {
+                    Toast.makeText(
+                        this@CurrentWeatherActivity,
+                        "Please select a filter",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
                 true
             } else {
@@ -124,7 +131,16 @@ class CurrentWeatherActivity : AppCompatActivity(), CurrentWeatherAdapter.ItemSe
     }
 
     override fun navigateToForecast() {
-        TODO("Not yet implemented")
+        if (getLastSearched().equals("")) {
+            Toast.makeText(
+                this@CurrentWeatherActivity,
+                "Please search a location",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            val intent = Intent(this@CurrentWeatherActivity, ForecastActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun zipCodeSelected() {
@@ -199,6 +215,13 @@ class CurrentWeatherActivity : AppCompatActivity(), CurrentWeatherAdapter.ItemSe
     fun setLastSearched(lastSearched: String) {
         if (this::mPref.isInitialized)
             mPref.edit().putString(PREF_KEY_LAST_SEARCHED, lastSearched).apply()
+    }
+
+    fun getLastSearched(): String {
+        if (this::mPref.isInitialized)
+            return readFromPreferences(PREF_KEY_LAST_SEARCHED, "").toString()
+        else
+            return ""
     }
 
     private fun readFromPreferences(
