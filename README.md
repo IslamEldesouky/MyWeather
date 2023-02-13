@@ -21,8 +21,7 @@ An app to show the current weather and forecast of any place.
 
 
 ![MicrosoftTeams-image (5)](https://user-images.githubusercontent.com/17251705/218444685-1533a951-b395-4952-bd99-e0446b0d0d90.png)
-
 ![MicrosoftTeams-image (7)](https://user-images.githubusercontent.com/17251705/218444781-33764974-ff52-4481-88a5-37b5cdfa6395.png)
-
-
 ![MicrosoftTeams-image (6)](https://user-images.githubusercontent.com/17251705/218444840-a62583c2-5551-420b-a192-3b8a9b705116.png)
+![MicrosoftTeams-image (8)](https://user-images.githubusercontent.com/17251705/218449812-cc5caf4c-8797-4769-b9c6-097835f998eb.png)
+
